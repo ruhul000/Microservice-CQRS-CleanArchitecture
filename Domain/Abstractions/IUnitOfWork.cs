@@ -1,5 +1,6 @@
 ﻿namespace Domain.Abstractions;
 public interface IUnitOfWork
 {
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    IProductRepository ProductRepository { get; }
+    Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

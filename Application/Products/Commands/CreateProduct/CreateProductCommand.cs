@@ -1,4 +1,6 @@
-﻿namespace Application.Products.Commands.CreateProduct;
+﻿using Application.Abstractions.Messaging;
 
-public sealed record CreateProductCommand(string Name, string Description, double Price) : ICommand<Guid>;
+namespace Application.Products.Commands.CreateProduct;
+
+public sealed record CreateProductCommand(string Name, string? Description, decimal? Price) : ICommand<Guid>;
 

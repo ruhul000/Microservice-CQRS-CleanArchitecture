@@ -1,25 +1,30 @@
 using Application;
+using Domain.Abstractions;
 using Infrastructure;
-using Presentation;
+using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using ProductAPI.Endpoints;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var presentationAssembly = typeof(Presentation.AssemblyReference).Assembly;
+var connectionString = builder.Configuration.GetConnectionString("ProductDBConnectionString");
+builder.Services.AddDbContext<ProductDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddControllers()
-    .AddApplicationPart(presentationAssembly);
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
+
+builder.Services.AddApplication()
+                .AddInfrastructure();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Host.UseSerilog((context, configuration) =>
-    configuration.ReadFrom.Configuration(context.Configuration));
-
-builder.Services
-    .AddPresentation()
-    .AddApplication()
-    .AddInfrastructure();
 
 var app = builder.Build();
 
@@ -35,5 +40,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapProductEndpoints();
 
 app.Run();

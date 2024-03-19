@@ -1,28 +1,25 @@
-﻿using Application.Products.Queries.GetWebinarById;
+﻿using Application.Abstractions.Messaging;
+using Domain.Abstractions;
 using Domain.Exceptions;
-using System.Data;
+using Mapster;
 
 namespace Application.Products.Queries.GetProductById;
 
 public sealed class GetProductQueryHandler : IQueryHandler<GetProductByIdQuery, ProductResponse>
 {
-    private readonly IDbcinnection _dbConnection;
-    public GetProductQueryHandler(IDbConnection dbConnection) => _dbConnection = dbConnection;
+    private readonly IUnitOfWork _unitOfWork;
+    public GetProductQueryHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
 
-    public async Task<ProductResponse> Handler(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ProductResponse> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        const string sql = @"SELECT * FROM ""Products"" WHERE ""Id"" = @ProductId";
-
-        var product = await _dbConnection.QueryFirstorDefaultAsync<ProductResponse>(
-            sql, 
-            new { request.ProductId});
+        var product = await _unitOfWork.ProductRepository.GetProductById(request.ProductId);
         
         if(product is null)
         {
             throw new ProductNotFoundException(request.ProductId);
         }
 
-        return product;
+        return product.Adapt<ProductResponse>(); ;
     }
 
 }

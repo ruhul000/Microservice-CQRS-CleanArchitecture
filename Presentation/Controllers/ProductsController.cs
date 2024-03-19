@@ -1,16 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
+﻿using Application.Products.Commands.CreateProduct;
+using Application.Products.Queries.GetProductById;
+using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers;
 
 public sealed class ProductsController : ApiController
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateProduct([FormBody] CreateProductRequest request, CancellationToken cancellationToken)
+    [HttpGet("{ProductId:guid}")]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetProduct(Guid ProductId, CancellationToken cancellationToken)
     {
-        var command = request.Adapt<CreateProdcutCommand>();
-        var productId = await Sender.Send(command, cancellationToken);
+        var query = new GetProductByIdQuery(ProductId);
 
-        return CreatedAtAction(nameof(GetProduct), new { productId }, productId);
+        var Product = await Sender.Send(query, cancellationToken);
+
+        return Ok(Product);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateProduct(
+        [FromBody] CreateProductRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = request.Adapt<CreateProductCommand>();
+
+        var ProductId = await Sender.Send(command, cancellationToken);
+
+        return CreatedAtAction(nameof(GetProduct), new { ProductId }, ProductId);
     }
 }
