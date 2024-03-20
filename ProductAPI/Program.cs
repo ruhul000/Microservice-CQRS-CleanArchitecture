@@ -3,9 +3,7 @@ using Domain.Abstractions;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using ProductAPI.Endpoints;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 

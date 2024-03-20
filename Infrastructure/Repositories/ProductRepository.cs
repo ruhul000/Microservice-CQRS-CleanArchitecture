@@ -10,11 +10,17 @@ public sealed class ProductRepository : IProductRepository
 
     public ProductRepository(ProductDbContext dbContext) => _dbContext = dbContext;
 
-    public async Task<ICollection<Product>> GetAllProduct() 
-        => await _dbContext.Products.ToListAsync();
+    public async Task<bool> IsProductNameExist(string name)
+          => name != "" ? await _dbContext.Products.AnyAsync(obj => obj.Name == name) : false;
+
+    public async Task<IEnumerable<Product>> GetAllProducts() 
+        => await _dbContext.Products.ToListAsync() ?? Enumerable.Empty<Product>();
     
     public async Task<Product?> GetProductById(Guid id)
         => await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+    public async Task<Product?> GetProductByName(string name)
+       => await _dbContext.Products.FirstOrDefaultAsync(p => p.Name == name);
 
     public async void AddProduct(Product product) 
         => await _dbContext.AddAsync(product);

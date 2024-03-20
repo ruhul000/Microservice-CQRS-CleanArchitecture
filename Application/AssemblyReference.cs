@@ -1,6 +1,5 @@
-﻿using Application.Behaviors;
+﻿using Application.Products.Commands.CreateProduct;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -14,9 +13,7 @@ public static class AssemblyReference
         services.AddMediatR(configuration => 
             configuration.RegisterServicesFromAssembly(assembly));
 
-        services.AddValidatorsFromAssembly(assembly);
-
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped<IValidator<CreateProductCommand>, CreateProductCommandValidator>();
 
         return services;
     }

@@ -11,9 +11,16 @@ public sealed class ProductDbContext : DbContext
         : base(options)
     {
     }
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
-
     public DbSet<Product> Products { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
+        
+        modelBuilder.Entity<Product>()
+                    .Property(p => p.Price)
+                    .HasColumnType("decimal(18,2)");
+    }
+
+
 
 }

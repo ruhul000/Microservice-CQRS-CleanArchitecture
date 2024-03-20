@@ -1,11 +1,19 @@
-﻿using FluentValidation;
+﻿using Domain.Abstractions;
+using FluentValidation;
 
 namespace Application.Products.Commands.CreateProduct;
 
 public sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
-    public CreateProductCommandValidator()
+    private readonly IUnitOfWork _unitOfWork;
+    public CreateProductCommandValidator(IUnitOfWork unitOfWork)
     {
-        RuleFor(x => x.Name).NotEmpty();
+        _unitOfWork = unitOfWork;
+
+        RuleFor(x => x.Name).NotEmpty().WithMessage("Product name is required!")
+            .Must(ProductNameUnique).WithMessage("Product name already exist!");
     }
+
+    private bool ProductNameUnique(string ProductName)
+        => !_unitOfWork.ProductRepository.IsProductNameExist(ProductName).Result;
 }

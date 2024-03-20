@@ -31,12 +31,17 @@ public sealed class ProductsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
         var command = request.Adapt<CreateProductCommand>();
 
-        var ProductId = await _sender.Send(command, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
 
-        return CreatedAtAction("CreateProduct", new { ProductId }, ProductId);
+        if(result.IsFailure)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
     }
 }
