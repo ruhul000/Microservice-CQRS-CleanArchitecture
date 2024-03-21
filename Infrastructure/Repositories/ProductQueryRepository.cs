@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class ProductRepository : IProductRepository
+public sealed class ProductQueryRepository : IProductQueryRepository
 {
-    private readonly ProductDbContext _dbContext;
+    private readonly ProductReadDbContext _dbContext;
 
-    public ProductRepository(ProductDbContext dbContext) => _dbContext = dbContext;
+    public ProductQueryRepository(ProductReadDbContext dbContext) => _dbContext = dbContext;
 
     public async Task<bool> IsProductNameExist(string name)
-          => name != "" ? await _dbContext.Products.AnyAsync(obj => obj.Name == name) : false;
-
+      => name != "" ? await _dbContext.Products.AnyAsync(obj => obj.Name == name) : false;
     public async Task<IEnumerable<Product>> GetAllProducts() 
         => await _dbContext.Products.ToListAsync() ?? Enumerable.Empty<Product>();
     
@@ -22,6 +21,4 @@ public sealed class ProductRepository : IProductRepository
     public async Task<Product?> GetProductByName(string name)
        => await _dbContext.Products.FirstOrDefaultAsync(p => p.Name == name);
 
-    public async void AddProduct(Product product) 
-        => await _dbContext.AddAsync(product);
 }

@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using System.Threading;
 
-namespace ProductAPI.Endpoints;
+namespace Product.Command.Endpoints;
 
 public static class ProductEndpoints
 {

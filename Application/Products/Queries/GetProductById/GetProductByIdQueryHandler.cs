@@ -1,19 +1,17 @@
 ﻿using Application.Abstractions.Messaging;
 using Domain.Abstractions;
-using Domain.Entities;
-using Domain.Exceptions;
 using Mapster;
 
 namespace Application.Products.Queries.GetProductById;
 
-public sealed class GetProductQueryHandler : IQueryHandler<GetProductByIdQuery, Result<ProductResponse>>
+public sealed class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Result<ProductResponse>>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    public GetProductQueryHandler(IUnitOfWork unitOfWork) => _unitOfWork = unitOfWork;
+    private readonly IProductQueryRepository _productQueryRepository;
+    public GetProductByIdQueryHandler(IProductQueryRepository productQueryRepository) => _productQueryRepository = productQueryRepository;
 
     public async Task<Result<ProductResponse>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        var product = await _unitOfWork.ProductRepository.GetProductById(request.ProductId);
+        var product = await _productQueryRepository.GetProductById(request.ProductId);
         
         if(product is null)
         {

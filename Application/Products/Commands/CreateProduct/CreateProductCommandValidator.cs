@@ -5,15 +5,15 @@ namespace Application.Products.Commands.CreateProduct;
 
 public sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
-    private readonly IUnitOfWork _unitOfWork;
-    public CreateProductCommandValidator(IUnitOfWork unitOfWork)
+    private readonly IProductQueryRepository _productQueryRepository;
+    public CreateProductCommandValidator(IProductQueryRepository productQueryRepository)
     {
-        _unitOfWork = unitOfWork;
+        _productQueryRepository = productQueryRepository;
 
         RuleFor(x => x.Name).NotEmpty().WithMessage("Product name is required!")
             .Must(ProductNameUnique).WithMessage("Product name already exist!");
     }
 
     private bool ProductNameUnique(string ProductName)
-        => !_unitOfWork.ProductRepository.IsProductNameExist(ProductName).Result;
+        => !_productQueryRepository.IsProductNameExist(ProductName).Result;
 }

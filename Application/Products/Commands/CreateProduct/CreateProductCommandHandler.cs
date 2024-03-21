@@ -27,7 +27,7 @@ public sealed class CreateProductCommandHandler : ICommandHandler<CreateProductC
 
         var product = new Product(Guid.NewGuid(), request.Name, request.Description, request.Price);
 
-        _unitOfWork.ProductRepository.AddProduct(product);
+        _unitOfWork.ProductCommandRepository.AddProduct(product);
 
         if(await _unitOfWork.SaveChangesAsync(cancellationToken))
         {

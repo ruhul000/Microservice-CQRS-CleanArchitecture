@@ -1,5 +1,5 @@
 ﻿using Application.Products.Commands.CreateProduct;
-using Application.Products.Queries.GetProductById;
+using Asp.Versioning;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Presentation.Controllers;
 
 [ApiController]
-[Route("api/product")]
-public sealed class ProductsController : ControllerBase
+[Route("api/v{version:apiVersion}/Product")]
+[ApiVersion("1")]
+public sealed class ProductController : ControllerBase
 {
     private readonly ISender _sender;
-    public ProductsController(ISender sender)
+    public ProductController(ISender sender)
     {
         _sender = sender;
     }
@@ -31,6 +32,7 @@ public sealed class ProductsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [MapToApiVersion("1")]
     public async Task<ActionResult> CreateProduct([FromBody] CreateProductRequest request, CancellationToken cancellationToken)
     {
         var command = request.Adapt<CreateProductCommand>();

@@ -4,16 +4,17 @@ namespace Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ProductDbContext _context;
-        public UnitOfWork(ProductDbContext context)
+        private readonly ProductWriteDbContext _writeContext;
+
+        public UnitOfWork(ProductWriteDbContext writeContext)
         {
-            _context = context;
+            _writeContext = writeContext;
         }
         
-        public IProductRepository ProductRepository => new ProductRepository(_context);
+        public IProductCommandRepository ProductCommandRepository => new ProductCommandRepository(_writeContext);
         public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken)
         {
-            return await _context.SaveChangesAsync(true) > 0;
+            return await _writeContext.SaveChangesAsync(true) > 0;
         }
     }
 }

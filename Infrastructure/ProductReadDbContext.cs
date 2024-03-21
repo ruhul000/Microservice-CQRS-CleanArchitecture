@@ -5,16 +5,16 @@ using System;
 
 namespace Infrastructure;
 
-public sealed class ProductDbContext : DbContext
+public sealed class ProductReadDbContext : DbContext
 {
-    public ProductDbContext(DbContextOptions options)
+    public ProductReadDbContext(DbContextOptions<ProductReadDbContext> options)
         : base(options)
     {
     }
     public DbSet<Product> Products { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductReadDbContext).Assembly);
         
         modelBuilder.Entity<Product>()
                     .Property(p => p.Price)
