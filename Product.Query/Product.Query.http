@@ -1,6 +1,0 @@
-@Product.Query_HostAddress = http://localhost:5245
-
-GET {{Product.Query_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
