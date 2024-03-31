@@ -25,6 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Product.Query\Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Product.Query\Infrastructure\Infrastructure.csproj", "{9D034FF4-702D-4757-9F14-1ADEECBAE18B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product.Scripts", "Product.Scripts", "{7136BB73-9965-4CD4-9980-5315ECF97E22}"
+	ProjectSection(SolutionItems) = preProject
+		Product.Scripts\ProductDBScripts.sql = Product.Scripts\ProductDBScripts.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +83,7 @@ Global
 		{80883AA8-FF6C-4932-AC85-BECB3CF4C359} = {40007132-6A9A-4CA7-9DBB-805CC419E5A8}
 		{7DD00C88-713C-483A-BCC3-E496BF62036D} = {40007132-6A9A-4CA7-9DBB-805CC419E5A8}
 		{9D034FF4-702D-4757-9F14-1ADEECBAE18B} = {40007132-6A9A-4CA7-9DBB-805CC419E5A8}
+		{7136BB73-9965-4CD4-9980-5315ECF97E22} = {183F5727-222F-4A1C-ABD6-61F7DE009A4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14DA3339-8723-4B73-B3E8-A80887764B5C}

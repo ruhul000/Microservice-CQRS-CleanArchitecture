@@ -12,7 +12,7 @@ public sealed class GetProductByNameQueryHandler : IQueryHandler<GetProductByNam
     public async Task<Result<ProductResponse>> Handle(GetProductByNameQuery request, CancellationToken cancellationToken)
     {
         var product = await _productQueryRepository.GetProductByName(request.Name);
-        
+
         if(product is null)
         {
             return Result<ProductResponse>.Failure(new Error("GetProductByName", $"The product with the identifier {request.Name} was not found."));

@@ -3,7 +3,7 @@ using Application.Products.Queries.GetProductById;
 using Application.Products.Queries.GetProductByName;
 using MediatR;
 
-namespace Product.Query.Endpoints;
+namespace ProductAPI.Endpoints;
 
 public static class ProductEndpoints
 {
@@ -19,7 +19,7 @@ public static class ProductEndpoints
             return result;
         }).MapToApiVersion(1);
 
-        app.MapGet("ProductById/{productId}", async (Guid productId, ISender sender, CancellationToken cancellationToken) =>
+        app.MapGet("ProductById/{productId}", async (string productId, ISender sender, CancellationToken cancellationToken) =>
         {
             var query = new GetProductByIdQuery(productId);
 

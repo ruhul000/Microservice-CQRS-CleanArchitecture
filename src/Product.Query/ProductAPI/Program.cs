@@ -2,18 +2,28 @@ using Application;
 using Domain.Abstractions;
 using Infrastructure;
 using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Product.Query.Endpoints;
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 using Asp.Versioning.ApiExplorer;
-using Product.Query.OpenAPI;
+using MongoDB.Driver;
+using ProductAPI.Models;
+using ProductAPI.Endpoints;
+using ProductAPI.OpenAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ProductDBConnectionString");
-builder.Services.AddDbContext<ProductReadDbContext>(options => options.UseSqlServer(connectionString));
+//var connectionString = builder.Configuration.GetConnectionString("ProductDBConnectionString");
+//builder.Services.AddDbContext<ProductReadDbContext>(options => options.UseSqlServer(connectionString));
 
+// Add connection string
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
+
+// Register mongoDb configuration as a singleton object
+builder.Services.AddSingleton<IMongoDatabase>(options => {
+    var settings = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
+    var client = new MongoClient(settings.ConnectionString);
+    return client.GetDatabase(settings.DatabaseName);
+});
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
