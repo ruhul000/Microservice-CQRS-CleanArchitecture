@@ -11,9 +11,11 @@ namespace Presentation.Controllers;
 [ApiVersion("1")]
 public sealed class ProductController : ControllerBase
 {
+    private ILogger<ProductController> _logger;
     private readonly ISender _sender;
-    public ProductController(ISender sender)
+    public ProductController(ILogger<ProductController> logger, ISender sender)
     {
+        _logger = logger;
         _sender = sender;
     }
 
@@ -29,6 +31,7 @@ public sealed class ProductController : ControllerBase
 
         if(result.IsFailure)
         {
+            _logger.LogError("Error: {Error}, {@DateTimeUtc}", result.Error, DateTime.UtcNow);
             return BadRequest(result);
         }
 

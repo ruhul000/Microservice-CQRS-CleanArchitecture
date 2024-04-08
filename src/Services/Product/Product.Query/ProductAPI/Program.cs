@@ -9,32 +9,34 @@ using MongoDB.Driver;
 using ProductAPI.Models;
 using ProductAPI.Endpoints;
 using ProductAPI.OpenAPI;
+using Serilog;
+using ProductAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var connectionString = builder.Configuration.GetConnectionString("ProductDBConnectionString");
-//builder.Services.AddDbContext<ProductReadDbContext>(options => options.UseSqlServer(connectionString));
-
-// Add connection string
+// Configure MongoDB
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
 
-// Register mongoDb configuration as a singleton object
 builder.Services.AddSingleton<IMongoDatabase>(options => {
     var settings = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
-    var client = new MongoClient(settings.ConnectionString);
-    return client.GetDatabase(settings.DatabaseName);
+    var client = new MongoClient(settings?.ConnectionString);
+    return client.GetDatabase(settings?.DatabaseName);
 });
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-});
+// Configure Logger
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
+// Configure Middleware
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
+// Configure Project Assemblies
 builder.Services.AddApplication()
                 .AddInfrastructure();
 
+// Configure Services
 builder.Services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
 
+// Configure API Versioning
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1);
@@ -46,15 +48,12 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// Configure Swagger Options
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 ApiVersionSet apiVersionSet = app.NewApiVersionSet()
       .HasApiVersion(new ApiVersion(1))
@@ -65,8 +64,6 @@ ApiVersionSet apiVersionSet = app.NewApiVersionSet()
 RouteGroupBuilder versionGroup = app
     .MapGroup("api/v{apiVersion:apiVersion}")
     .WithApiVersionSet(apiVersionSet);
-
-app.MapControllers();
 
 versionGroup.MapProductQueries();
 
@@ -87,5 +84,11 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseSerilogRequestLogging();
+
+app.UseHttpsRedirection();
 
 app.Run();

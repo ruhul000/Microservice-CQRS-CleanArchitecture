@@ -1,9 +1,6 @@
 ﻿using Domain.Abstractions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories;

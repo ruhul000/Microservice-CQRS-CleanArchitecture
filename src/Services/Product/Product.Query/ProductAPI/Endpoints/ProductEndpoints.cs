@@ -9,7 +9,6 @@ public static class ProductEndpoints
 {
     public static void MapProductQueries(this IEndpointRouteBuilder app)
     {
-  
         app.MapGet("Products/", async (ISender sender, CancellationToken cancellationToken) =>
         {
             var query = new GetAllProductsQuery();

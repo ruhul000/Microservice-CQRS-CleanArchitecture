@@ -5,26 +5,39 @@ using Domain.Abstractions;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Product.Command.OpenAPI;
+using ProductAPI.Middleware;
+using ProductAPI.OpenAPI;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure DbContext
 var connectionString = builder.Configuration.GetConnectionString("ProductDBConnectionString");
 builder.Services.AddDbContext<ProductWriteDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<ProductReadDbContext>(options => options.UseSqlServer(connectionString));
 
+// Configure Logger
+builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
+
+// Configure Middleware
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
+// Configure Controller
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
+// Configure Project Assemblies
 builder.Services.AddApplication()
                 .AddInfrastructure();
 
+// Configure Services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductQueryRepository, ProductQueryRepository>();
 builder.Services.AddScoped<IProductCommandRepository, ProductCommandRepository>();
 
+// Configure API Versioning
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new ApiVersion(1);
@@ -36,8 +49,8 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+// Configure Swagger Options
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -60,6 +73,10 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
