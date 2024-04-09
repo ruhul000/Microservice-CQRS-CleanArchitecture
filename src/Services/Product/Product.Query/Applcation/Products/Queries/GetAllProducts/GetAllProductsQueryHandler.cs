@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Abstractions;
+using Application.Abstractions.Repositories;
 using Mapster;
 
 namespace Application.Products.Queries.GetAllProducts;

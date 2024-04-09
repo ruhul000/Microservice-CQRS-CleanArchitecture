@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Messaging;
-using Domain.Abstractions;
+using Application.Abstractions.Repositories;
 using Domain.Entities;
 using Mapster;
 

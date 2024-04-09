@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Domain.Abstractions;
+namespace Application.Abstractions.Repositories;
 
 public interface IProductCommandRepository
 {

@@ -1,5 +1,4 @@
 using Application;
-using Domain.Abstractions;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Asp.Versioning;
@@ -11,6 +10,7 @@ using ProductAPI.Endpoints;
 using ProductAPI.OpenAPI;
 using Serilog;
 using ProductAPI.Middleware;
+using Application.Abstractions.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

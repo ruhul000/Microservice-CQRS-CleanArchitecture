@@ -1,7 +1,7 @@
 using Application;
+using Application.Abstractions.Repositories;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Domain.Abstractions;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;

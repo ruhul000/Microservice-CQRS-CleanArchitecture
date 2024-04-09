@@ -1,4 +1,4 @@
-﻿namespace Domain.Abstractions;
+﻿namespace Application.Abstractions.Repositories;
 public interface IUnitOfWork
 {
     IProductCommandRepository ProductCommandRepository { get; }
